@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ======================================================
+   🌧 REALISTIC GLASS RAIN (PRO LEVEL)
+====================================================== */
+.rain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.rain::before,
+.rain::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  filter: blur(0.8px);
+  animation: rainFall 3.5s linear infinite;
+}
+
+/* random drops layer 1 */
+.rain::before {
+  left: 10%;
+  box-shadow:
+    120px 100px rgba(255,255,255,0.35),
+    260px 240px rgba(255,255,255,0.25),
+    420px 160px rgba(255,255,255,0.4),
+    600px 300px rgba(255,255,255,0.3),
+    820px 200px rgba(255,255,255,0.35),
+    1040px 360px rgba(255,255,255,0.25);
+}
+
+/* random drops layer 2 */
+.rain::after {
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  opacity: 0.3;
+  animation-duration: 4.5s;
+  box-shadow:
+    -160px 220px rgba(255,255,255,0.35),
+    -340px 420px rgba(255,255,255,0.25),
+    -520px 140px rgba(255,255,255,0.4),
+    -760px 320px rgba(255,255,255,0.3);
+}
+
+@keyframes rainFall {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(120vh);
+  }
+}
+
+/* ======================================================
+   ❄️ VERY BIG RANDOM SNOW FLAKES (PRO LEVEL)
+====================================================== */
+.snow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  mix-blend-mode: screen;
+}
+
+.snow::before,
+.snow::after {
+  content: "";
+  position: absolute;
+  top: -10%;
+  width: 22px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+  filter: blur(1.2px);
+  animation: snowFall 22s linear infinite;
+}
+
+/* BIG flakes layer 1 */
+.snow::before {
+  left: 12%;
+  box-shadow:
+    180px 160px rgba(255,255,255,0.9),
+    420px 320px rgba(255,255,255,0.85),
+    660px 120px rgba(255,255,255,0.95),
+    920px 260px rgba(255,255,255,0.9),
+    1180px 200px rgba(255,255,255,0.88);
+}
+
+/* BIG flakes layer 2 */
+.snow::after {
+  left: 55%;
+  width: 16px;
+  height: 16px;
+  opacity: 0.8;
+  animation-duration: 28s;
+  box-shadow:
+    -240px 200px rgba(255,255,255,0.9),
+    -520px 360px rgba(255,255,255,0.95),
+    -780px 140px rgba(255,255,255,0.85),
+    -1040px 300px rgba(255,255,255,0.9);
+}
+
+@keyframes snowFall {
+  from {
+    transform: translateY(0) translateX(0);
+  }
+  to {
+    transform: translateY(130vh) translateX(60px);
+  }
+}
+
+/* ======================================================
+   🌤 ICON ANIMATIONS (UNCHANGED)
+====================================================== */
+
+.animate-sun {
+  animation: spinSlow 12s linear infinite;
+}
+
+.animate-cloud {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-rain {
+  animation: rainBounce 1.5s ease-in-out infinite;
+}
+
+.animate-snow {
+  animation: snowPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes rainBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+@keyframes snowPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* ======================================================
+   🧊 HEADER ANIMATIONS
+====================================================== */
+
+.animate-float {
+  animation: floatLogo 4s ease-in-out infinite;
+}
+
+@keyframes floatLogo {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientMove 6s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+/* ===============================
+   ⏰ Hourly Scroll (Show on Hover)
+================================ */
+
+.hourly-scroll {
+  overflow-x: auto;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar by default */
+.hourly-scroll::-webkit-scrollbar {
+  height: 0;
+}
+
+/* Show scrollbar ONLY on hover */
+.hourly-scroll:hover::-webkit-scrollbar {
+  height: 6px;
+}
+
+.hourly-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.hourly-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+}
+
+.hourly-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* Firefox support */
+.hourly-scroll {
+  scrollbar-width: none;
+}
+.hourly-scroll:hover {
+  scrollbar-width: thin;
+}
