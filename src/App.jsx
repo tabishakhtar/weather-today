@@ -13,6 +13,8 @@ import { WiDayCloudy, WiThermometer, WiHumidity } from "react-icons/wi";
 import SunriseCard from "./components/SunriseCard";
 import MoonCard from "./components/MoonCard";
 import LoadingScreen from "./components/LoadingScreen";
+console.log("API KEY:", import.meta.env.VITE_WEATHER_API_KEY);
+
 
 function App() {
   const [weather, setWeather] = useState(null);
