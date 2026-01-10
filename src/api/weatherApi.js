@@ -1,11 +1,29 @@
 import axios from "axios";
 
-const API = axios.create({
-  baseURL: "http://localhost:5000/api/weather",
-});
+const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
-export const fetchWeather = (city) => API.get(`/${city}`);
-export const fetchNews = () => API.get("/news/weather");
+const BASE_URL = "https://api.openweathermap.org/data/2.5";
+
+// 🌆 By city name
+export const fetchWeather = (city) =>
+  axios.get(`${BASE_URL}/weather`, {
+    params: {
+      q: city,
+      appid: API_KEY,
+      units: "metric",
+    },
+  });
+
+// 📍 By location
 export const fetchWeatherByLocation = (lat, lon) =>
-  API.get(`/location/weather?lat=${lat}&lon=${lon}`);
+  axios.get(`${BASE_URL}/weather`, {
+    params: {
+      lat,
+      lon,
+      appid: API_KEY,
+      units: "metric",
+    },
+  });
 
+// 📰 (Optional) remove if not used
+export const fetchNews = () => Promise.resolve({ data: [] });
