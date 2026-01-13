@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
-import { fetchNews } from "../api/weatherApi";
 
 export default function News() {
   const [news, setNews] = useState([]);
 
+  // ✅ Static placeholder data (safe for Vercel build)
   useEffect(() => {
-    fetchNews().then((res) => setNews(res.data));
+    setNews([
+      { title: "Heatwave expected in several regions this week." },
+      { title: "Heavy rainfall may cause flooding in coastal areas." },
+      { title: "Cold winds to impact northern cities overnight." },
+      { title: "Clear skies expected after weekend storms." },
+    ]);
   }, []);
 
   return (
