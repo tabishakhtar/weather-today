@@ -18,7 +18,7 @@ function App() {
   const [weather, setWeather] = useState(null);
   const [unit, setUnit] = useState("metric");
 
-  // 🌍 Auto-detect location (FIXED)
+  // 🌍 Auto-detect location (FINAL FIX)
   useEffect(() => {
     if (!navigator.geolocation) return;
 
@@ -28,17 +28,17 @@ function App() {
           const { latitude, longitude } = position.coords;
           const res = await fetchWeatherByLocation(latitude, longitude);
 
-          // ✅ FIX: map OpenWeather response to your UI structure
+          // ✅ USE BOTH CURRENT + FORECAST
           setWeather({
             current: {
-              ...res.data,
-              main: res.data.main,
-              weather: res.data.weather,
-              wind: res.data.wind,
-              name: res.data.name,
-              sys: res.data.sys,
+              ...res.current,
+              main: res.current.main,
+              weather: res.current.weather,
+              wind: res.current.wind,
+              name: res.current.name,
+              sys: res.current.sys,
             },
-            forecast: null,
+            forecast: res.forecast,
           });
         } catch (err) {
           console.error("Weather fetch failed", err);
@@ -121,7 +121,7 @@ function App() {
             </div>
           </div>
 
-          {/* FORECAST */}
+          {/* ✅ FORECAST NOW RECEIVES DATA */}
           <Forecast forecast={weather.forecast} unit={unit} />
         </div>
 

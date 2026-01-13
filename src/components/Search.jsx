@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fetchWeather } from "../api/weatherApi";
+import { fetchWeather, fetchWeatherByLocation } from "../api/weatherApi";
 
 export default function Search({ setWeather }) {
   const [city, setCity] = useState("");
@@ -16,9 +16,17 @@ export default function Search({ setWeather }) {
 
     try {
       setError("");
+
+      // 1️⃣ Get current weather by city
       const res = await fetchWeather(trimmedCity);
 
-      // ✅ FIX: map API response to expected structure
+      // 2️⃣ Extract coordinates
+      const { lat, lon } = res.data.coord;
+
+      // 3️⃣ Get forecast (hourly + daily)
+      const forecastRes = await fetchWeatherByLocation(lat, lon);
+
+      // ✅ Map data to expected structure
       setWeather({
         current: {
           ...res.data,
@@ -28,7 +36,7 @@ export default function Search({ setWeather }) {
           name: res.data.name,
           sys: res.data.sys,
         },
-        forecast: null,
+        forecast: forecastRes.forecast,
       });
 
       setCity("");
