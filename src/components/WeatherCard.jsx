@@ -19,6 +19,10 @@ export default function WeatherCard({ weather, unit }) {
       ? Math.round((tempC * 9) / 5 + 32)
       : Math.round(tempC);
 
+  // ✅ FIX: hourly data source
+  const hourly =
+    weather.forecast?.list?.slice(0, 12) || [];
+
   return (
     <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-6 rounded-2xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-white/40">
       
@@ -52,23 +56,22 @@ export default function WeatherCard({ weather, unit }) {
         {weather.current.weather[0].description}
       </p>
 
-      {/* ================= MINI HOURLY TEMP GRAPH ================= */}
-      {Array.isArray(weather.hourly) && weather.hourly.length > 0 && (
-        <div className="mb-4">
+      {/* ================= MINI GRAPH ================= */}
+      {hourly.length > 0 && (
+        <div className="mb-4 overflow-hidden">
           <svg viewBox="0 0 300 60" className="w-full h-14">
             <polyline
               fill="none"
-              stroke="rgba(255,255,255,0.8)"
+              stroke="rgba(255,255,255,0.85)"
               strokeWidth="2"
-              points={weather.hourly
-                .slice(0, 12)
+              points={hourly
                 .map((h, i) => {
                   const t =
                     unit === "imperial"
                       ? (h.main.temp * 9) / 5 + 32
                       : h.main.temp;
-                  const x = (i / 11) * 300;
-                  const y = 60 - (t * 1.2); // visual scaling
+                  const x = (i / (hourly.length - 1)) * 300;
+                  const y = 60 - t * 1.2;
                   return `${x},${y}`;
                 })
                 .join(" ")}
@@ -78,15 +81,15 @@ export default function WeatherCard({ weather, unit }) {
       )}
 
       {/* ================= HOURLY FORECAST ================= */}
-      {Array.isArray(weather.hourly) && weather.hourly.length > 0 && (
+      {hourly.length > 0 && (
         <div>
           <h3 className="text-sm text-slate-300 mb-2">
             Hourly Forecast
           </h3>
 
-          {/* ⚠️ ORIGINAL SCROLL – NOT TOUCHED */}
+          {/* ✅ Scroll visible only on hover (CSS already exists) */}
           <div className="flex gap-4 hourly-scroll pb-3">
-            {weather.hourly.slice(0, 12).map((hour, i) => {
+            {hourly.map((hour, i) => {
               const hourCondition =
                 hour.weather[0].main.toLowerCase();
               const hourIsNight =
@@ -97,11 +100,10 @@ export default function WeatherCard({ weather, unit }) {
                 { hour: "2-digit", minute: "2-digit" }
               );
 
-              const hourTempC = hour.main.temp;
               const hourTemp =
                 unit === "imperial"
-                  ? Math.round((hourTempC * 9) / 5 + 32)
-                  : Math.round(hourTempC);
+                  ? Math.round((hour.main.temp * 9) / 5 + 32)
+                  : Math.round(hour.main.temp);
 
               return (
                 <div
