@@ -13,26 +13,41 @@ import { WiDayCloudy, WiThermometer, WiHumidity } from "react-icons/wi";
 import SunriseCard from "./components/SunriseCard";
 import MoonCard from "./components/MoonCard";
 import LoadingScreen from "./components/LoadingScreen";
-console.log("API KEY:", import.meta.env.VITE_WEATHER_API_KEY);
-
 
 function App() {
   const [weather, setWeather] = useState(null);
-  const [unit, setUnit] = useState("metric"); // °C / °F
+  const [unit, setUnit] = useState("metric");
 
-  // 🌍 Auto-detect location
+  // 🌍 Auto-detect location (FIXED)
   useEffect(() => {
     if (!navigator.geolocation) return;
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        const { latitude, longitude } = position.coords;
-        const res = await fetchWeatherByLocation(latitude, longitude);
-        setWeather(res.data);
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await fetchWeatherByLocation(latitude, longitude);
+
+          // ✅ FIX: map OpenWeather response to your UI structure
+          setWeather({
+            current: {
+              ...res.data,
+              main: res.data.main,
+              weather: res.data.weather,
+              wind: res.data.wind,
+              name: res.data.name,
+              sys: res.data.sys,
+            },
+            forecast: null,
+          });
+        } catch (err) {
+          console.error("Weather fetch failed", err);
+        }
       },
       () => console.log("Location permission denied")
     );
   }, []);
+
   if (!weather) {
     return <LoadingScreen />;
   }
@@ -42,12 +57,10 @@ function App() {
       className="relative min-h-screen bg-cover bg-center transition-all duration-700"
       style={{ backgroundImage: `url(${getBackground(weather)})` }}
     >
-      {/* 🌧❄️ Weather effects */}
       <WeatherEffects weather={weather} />
 
-      {/* 🌑 Dark overlay */}
       <div className="relative z-10 min-h-screen bg-black/50 text-slate-100 p-6">
-        {/* ================= HEADER ================= */}
+        {/* HEADER */}
         <div className="flex flex-col items-center gap-2 mb-6">
           <WiDayCloudy className="text-6xl text-sky-300 animate-float" />
           <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-sky-300 via-blue-300 to-indigo-400 bg-clip-text text-transparent text-center">
@@ -58,7 +71,7 @@ function App() {
           </p>
         </div>
 
-        {/* ================= UNIT TOGGLE ================= */}
+        {/* UNIT TOGGLE */}
         <div className="flex justify-center mb-6">
           <button
             onClick={() => setUnit(unit === "metric" ? "imperial" : "metric")}
@@ -68,54 +81,51 @@ function App() {
           </button>
         </div>
 
-        {/* ================= SEARCH ================= */}
+        {/* SEARCH */}
         <div className="flex justify-center mb-6">
           <Search setWeather={setWeather} />
         </div>
 
-        {/* ================= MAIN CONTENT ================= */}
-        {weather && weather.current && (
-          <div className="max-w-5xl mx-auto space-y-6">
-            {/* Top Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* ✅ Main Weather (WIDER HORIZONTALLY) */}
-              <div className="md:col-span-2">
-                <WeatherCard weather={weather} unit={unit} />
-              </div>
-
-              {/* Metric / Visual Cards */}
-              <div className="grid grid-cols-2 gap-4">
-                <Metric
-                  title="Feels Like"
-                  value={
-                    unit === "imperial"
-                      ? (weather.current.main.feels_like * 9) / 5 + 32
-                      : weather.current.main.feels_like
-                  }
-                  unit={unit === "metric" ? "°C" : "°F"}
-                  icon={<WiThermometer />}
-                />
-
-                <Metric
-                  title="Humidity"
-                  value={weather.current.main.humidity}
-                  unit="%"
-                  icon={<WiHumidity />}
-                />
-
-                <WindDirectionCard weather={weather} unit={unit} />
-                <PressureMeter weather={weather} />
-                <SunriseCard weather={weather} />
-                <MoonCard />
-              </div>
+        {/* MAIN CONTENT */}
+        <div className="max-w-5xl mx-auto space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* WEATHER CARD */}
+            <div className="md:col-span-2">
+              <WeatherCard weather={weather} unit={unit} />
             </div>
 
-            {/* Forecast */}
-            <Forecast forecast={weather.forecast} unit={unit} />
-          </div>
-        )}
+            {/* METRICS */}
+            <div className="grid grid-cols-2 gap-4">
+              <Metric
+                title="Feels Like"
+                value={
+                  unit === "imperial"
+                    ? (weather.current.main.feels_like * 9) / 5 + 32
+                    : weather.current.main.feels_like
+                }
+                unit={unit === "metric" ? "°C" : "°F"}
+                icon={<WiThermometer />}
+              />
 
-        {/* ================= NEWS (BOTTOM) ================= */}
+              <Metric
+                title="Humidity"
+                value={weather.current.main.humidity}
+                unit="%"
+                icon={<WiHumidity />}
+              />
+
+              <WindDirectionCard weather={weather} unit={unit} />
+              <PressureMeter weather={weather} />
+              <SunriseCard weather={weather} />
+              <MoonCard />
+            </div>
+          </div>
+
+          {/* FORECAST */}
+          <Forecast forecast={weather.forecast} unit={unit} />
+        </div>
+
+        {/* NEWS */}
         <div className="max-w-5xl mx-auto mt-10">
           <News />
         </div>
@@ -124,7 +134,7 @@ function App() {
   );
 }
 
-/* ================= METRIC CARD ================= */
+/* METRIC CARD */
 function Metric({ title, value, unit, icon }) {
   return (
     <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-4 flex items-center gap-3 transition-all duration-300 hover:bg-white/15">
