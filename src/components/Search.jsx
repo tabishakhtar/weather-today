@@ -17,7 +17,20 @@ export default function Search({ setWeather }) {
     try {
       setError("");
       const res = await fetchWeather(trimmedCity);
-      setWeather(res.data);
+
+      // ✅ FIX: map API response to expected structure
+      setWeather({
+        current: {
+          ...res.data,
+          main: res.data.main,
+          weather: res.data.weather,
+          wind: res.data.wind,
+          name: res.data.name,
+          sys: res.data.sys,
+        },
+        forecast: null,
+      });
+
       setCity("");
     } catch (err) {
       setError("City not found");

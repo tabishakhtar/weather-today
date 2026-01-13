@@ -1,10 +1,9 @@
 import axios from "axios";
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+const BASE_URL = "https://api.openweathermap.org/data/2.5";
 
-const BASE_URL = "/api/weather";
-
-// 🌆 By city name
+// 🌍 By city
 export const fetchWeather = (city) =>
   axios.get(`${BASE_URL}/weather`, {
     params: {
@@ -24,6 +23,3 @@ export const fetchWeatherByLocation = (lat, lon) =>
       units: "metric",
     },
   });
-
-// 📰 (Optional) remove if not used
-export const fetchNews = () => Promise.resolve({ data: [] });
