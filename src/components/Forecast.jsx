@@ -1,7 +1,11 @@
 import getWeatherIcon from "../utils/getWeatherIcon";
 
 export default function Forecast({ forecast, unit }) {
-  if (!forecast || forecast.length === 0) return null;
+  // ✅ FIX: forecast comes from /forecast API → use forecast.list
+  if (!forecast || !forecast.list || forecast.list.length === 0) return null;
+
+  // ✅ Take one forecast per day (every 8th item = 24 hours)
+  const dailyForecast = forecast.list.filter((_, index) => index % 8 === 0);
 
   return (
     <div
@@ -16,12 +20,13 @@ export default function Forecast({ forecast, unit }) {
         hover:border-white/40
       "
     >
-      <h2 className="text-xl font-semibold text-white mb-4">5-Day Forecast</h2>
+      <h2 className="text-xl font-semibold text-white mb-4">
+        5-Day Forecast
+      </h2>
 
       <div className="space-y-3">
-        {forecast.map((day, index) => {
+        {dailyForecast.map((day, index) => {
           const condition = day.weather[0].main.toLowerCase();
-
           const isNight = day.weather[0].icon.endsWith("n");
 
           const tempC = day.main.temp;
